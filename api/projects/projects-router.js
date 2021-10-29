@@ -1,5 +1,10 @@
 const express = require("express");
-const { validateId } = require("./projects-middleware");
+const {
+  validateId,
+  validatePost,
+  handleError,
+} = require("./projects-middleware");
+
 //eslint-disable-next-line
 const Project = require("./projects-model");
 
@@ -15,8 +20,20 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", validateId, (req, res) => {
+//eslint-disable-next-line
+router.get("/:id", validateId, (req, res, next) => {
   res.status(200).json(req.project);
 });
+
+router.post("/", validatePost, async (req, res, next) => {
+  try {
+    const project = await Project.insert(req.body);
+    res.status(201).json(project);
+  } catch (er) {
+    next();
+  }
+});
+
+router.use(handleError);
 
 module.exports = router;
