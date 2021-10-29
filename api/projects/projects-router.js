@@ -42,6 +42,25 @@ router.put("/:id", validateId, validatePost, async (req, res, next) => {
   }
 });
 
+router.delete("/:id", validateId, async (req, res, next) => {
+  try {
+    //eslint-disable-next-line
+    const removed = await Project.remove(req.params.id);
+    res.status(200).json({ message: `deleted` });
+  } catch (er) {
+    next();
+  }
+});
+
+router.get("/:id/actions", validateId, async (req, res, next) => {
+  try {
+    const actions = await Project.getProjectActions(req.params.id);
+    res.status(200).json(actions);
+  } catch (er) {
+    next();
+  }
+});
+
 router.use(handleError);
 
 module.exports = router;
