@@ -13,7 +13,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const projects = await Project.get();
-    console.log(projects);
     res.status(200).json(projects);
   } catch (er) {
     res.status(500);
@@ -29,6 +28,15 @@ router.post("/", validatePost, async (req, res, next) => {
   try {
     const project = await Project.insert(req.body);
     res.status(201).json(project);
+  } catch (er) {
+    next();
+  }
+});
+
+router.put("/:id", validateId, validatePost, async (req, res, next) => {
+  try {
+    const changes = await Project.update(req.params.id, req.body);
+    res.status(200).json(changes);
   } catch (er) {
     next();
   }
